@@ -1,0 +1,19 @@
+group 'EReminisce'
+version '0.1'
+
+apply plugin: 'java'
+
+sourceCompatibility = 8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '+'
+    compile 'com.evernote:evernote-api:+'
+    compile 'org.scribe:scribe:+'
+    compile 'joda-time:joda-time:+'
+    compile 'log4j:log4j:+'
+    compile 'com.google.code.gson:gson:+'
+}
