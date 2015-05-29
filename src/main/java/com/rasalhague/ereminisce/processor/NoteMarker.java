@@ -26,7 +26,7 @@ public class NoteMarker
         this.noteStoreClient = noteStoreClient;
     }
 
-    public void mark(List<NoteMetadata> noteMetadatas)
+    public boolean mark(List<NoteMetadata> noteMetadatas)
     {
         try
         {
@@ -41,11 +41,16 @@ public class NoteMarker
 
                 noteStoreClient.updateNote(note);
             }
+
+            return true;
         }
         catch (EDAMUserException | EDAMSystemException | EDAMNotFoundException | TException e)
         {
             logger.warn("Note have not marked");
             logger.warn(Utils.getStackTraceString(e));
+            logger.warn("Trying to remark");
+
+            return mark(noteMetadatas);
         }
     }
 
