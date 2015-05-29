@@ -12,4 +12,16 @@ public class Utils
 
         return sw.toString();
     }
+
+    public static void sleep(long timeInMs)
+    {
+        try
+        {
+            Thread.sleep(timeInMs);
+        }
+        catch (InterruptedException e)
+        {
+            e.printStackTrace();
+        }
+    }
 }
