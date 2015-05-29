@@ -44,9 +44,9 @@ public class NoteDateCalculator
                         Long noteUpdTimeMs = notesUpdateTime.get(noteGUID);
                         Long noteLasRipeMs = notesLastRipe.containsKey(noteGUID) ? notesLastRipe.get(noteGUID) : noteUpdTimeMs;
 
+                        logger.info("Check ripe for " + noteMetadata);
                         if (checkForRipe(tagInfo, noteUpdTimeMs, noteLasRipeMs))
                         {
-                            logger.info("Check ripe for " + noteMetadata);
                             ripeNotesMetadata.add(noteMetadata);
                         }
                     }
