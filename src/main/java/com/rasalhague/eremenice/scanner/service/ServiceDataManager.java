@@ -26,10 +26,11 @@ public class ServiceDataManager
     private final static Logger logger             = Logger.getLogger(ServiceDataManager.class);
     private final        String SERVICE_NOTE_TITLE = "ERemenice Service Note";
     private final        String SERVICE_TAG_NAME   = "ERemenice Service Note";
-    private final        String CONTENT_FILTER     = "<en-note>(?<Content>.*)<\\/en-note>";
-    private final        Gson   gson               = new GsonBuilder().setPrettyPrinting().create();
+    private final        String CONTENT_FILTER     = "(<en-note>)(.*?)(?<Content>\\{.*\\})?(.*)(<\\/en-note>)";
+    private final        Gson   gson               = new GsonBuilder().create();
     private final NoteStoreClient noteStoreClient;
-    private       ServiceData     serviceData;
+    private long serviceDataLoadRetryDelay = 5000;
+    private ServiceData serviceData;
 
     public ServiceDataManager(NoteStoreClient noteStoreClient)
     {
@@ -77,8 +78,35 @@ public class ServiceDataManager
         {
             filteredContent = matcher.group("Content");
         }
-    
-        return gson.fromJson(filteredContent, ServiceData.class);
+
+        /**
+         * Must return felt and recognized ServiceData
+         * else data will override in NoteProcessor.addNewNotesToServiceData() with new DateTime()
+         * that causing time update for all ER notes
+         *
+         * So, do recursive call
+         * You Shell Not Pass
+         */
+        ServiceData serviceData;
+        try
+        {
+            serviceData = gson.fromJson(filteredContent, ServiceData.class);
+
+            if (serviceData == null) throw new NullPointerException("serviceData == null");
+        }
+        catch (Exception e)
+        {
+            logger.warn(Utils.getStackTraceString(e));
+            logger.warn("content: " + content);
+            logger.warn("filteredContent: " + filteredContent);
+            logger.warn("Starting recursive calling");
+
+            Utils.sleep(serviceDataLoadRetryDelay);
+
+            serviceData = loadServiceData();
+        }
+
+        return serviceData;
     }
 
     private Note loadServiceNote()
