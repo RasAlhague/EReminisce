@@ -1,4 +1,4 @@
-package com.rasalhague.eremenice.scanner;
+package com.rasalhague.ereminisce.scanner;
 
 import java.util.TimerTask;
 

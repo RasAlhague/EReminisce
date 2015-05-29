@@ -1,4 +1,4 @@
-package com.rasalhague.eremenice.scanner;
+package com.rasalhague.ereminisce.scanner;
 
 import com.evernote.clients.NoteStoreClient;
 import com.evernote.edam.error.EDAMNotFoundException;
@@ -10,7 +10,7 @@ import com.evernote.edam.notestore.NotesMetadataList;
 import com.evernote.edam.notestore.NotesMetadataResultSpec;
 import com.evernote.edam.type.Tag;
 import com.evernote.thrift.TException;
-import com.rasalhague.eremenice.Utils;
+import com.rasalhague.ereminisce.Utils;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;

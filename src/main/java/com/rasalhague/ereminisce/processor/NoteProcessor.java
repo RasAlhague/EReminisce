@@ -1,9 +1,9 @@
-package com.rasalhague.eremenice.processor;
+package com.rasalhague.ereminisce.processor;
 
 import com.evernote.clients.NoteStoreClient;
 import com.evernote.edam.notestore.NoteMetadata;
 import com.evernote.edam.type.Tag;
-import com.rasalhague.eremenice.scanner.service.ServiceDataManager;
+import com.rasalhague.ereminisce.scanner.service.ServiceDataManager;
 import org.joda.time.DateTime;
 
 import java.util.HashMap;

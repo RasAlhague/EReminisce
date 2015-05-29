@@ -1,6 +1,6 @@
-import com.rasalhague.eremenice.connection.EvernoteSession;
-import com.rasalhague.eremenice.scanner.service.ServiceData;
-import com.rasalhague.eremenice.scanner.service.ServiceDataManager;
+import com.rasalhague.ereminisce.connection.EvernoteSession;
+import com.rasalhague.ereminisce.scanner.service.ServiceData;
+import com.rasalhague.ereminisce.scanner.service.ServiceDataManager;
 import org.junit.Before;
 import org.junit.Test;
 

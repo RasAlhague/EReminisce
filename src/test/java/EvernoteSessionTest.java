@@ -1,5 +1,5 @@
 import com.evernote.clients.NoteStoreClient;
-import com.rasalhague.eremenice.connection.EvernoteSession;
+import com.rasalhague.ereminisce.connection.EvernoteSession;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

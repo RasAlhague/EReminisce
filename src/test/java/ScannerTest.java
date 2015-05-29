@@ -1,7 +1,7 @@
 import com.evernote.edam.notestore.NoteMetadata;
 import com.evernote.edam.type.Tag;
-import com.rasalhague.eremenice.connection.EvernoteSession;
-import com.rasalhague.eremenice.scanner.Scanner;
+import com.rasalhague.ereminisce.connection.EvernoteSession;
+import com.rasalhague.ereminisce.scanner.Scanner;
 import org.junit.Before;
 import org.junit.Test;
 

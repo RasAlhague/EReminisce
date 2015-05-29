@@ -1,10 +1,10 @@
-package com.rasalhague.eremenice;
+package com.rasalhague.ereminisce;
 
 import com.evernote.edam.notestore.NoteMetadata;
 import com.evernote.edam.type.Tag;
-import com.rasalhague.eremenice.processor.NoteProcessor;
-import com.rasalhague.eremenice.scanner.Scanner;
-import com.rasalhague.eremenice.scanner.ScannerObservable;
+import com.rasalhague.ereminisce.processor.NoteProcessor;
+import com.rasalhague.ereminisce.scanner.Scanner;
+import com.rasalhague.ereminisce.scanner.ScannerObservable;
 
 import java.util.List;
 

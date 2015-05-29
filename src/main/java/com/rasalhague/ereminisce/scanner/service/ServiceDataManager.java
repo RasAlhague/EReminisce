@@ -1,4 +1,4 @@
-package com.rasalhague.eremenice.scanner.service;
+package com.rasalhague.ereminisce.scanner.service;
 
 import com.evernote.clients.NoteStoreClient;
 import com.evernote.edam.error.EDAMNotFoundException;
@@ -12,7 +12,7 @@ import com.evernote.edam.type.Tag;
 import com.evernote.thrift.TException;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.rasalhague.eremenice.Utils;
+import com.rasalhague.ereminisce.Utils;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 

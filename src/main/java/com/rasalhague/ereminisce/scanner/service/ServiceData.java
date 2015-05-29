@@ -1,4 +1,4 @@
-package com.rasalhague.eremenice.scanner.service;
+package com.rasalhague.ereminisce.scanner.service;
 
 import java.util.HashMap;
 

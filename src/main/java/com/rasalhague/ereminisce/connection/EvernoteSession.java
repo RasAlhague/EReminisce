@@ -1,4 +1,4 @@
-package com.rasalhague.eremenice.connection;
+package com.rasalhague.ereminisce.connection;
 
 import com.evernote.auth.EvernoteAuth;
 import com.evernote.auth.EvernoteService;
@@ -7,7 +7,7 @@ import com.evernote.clients.NoteStoreClient;
 import com.evernote.edam.error.EDAMSystemException;
 import com.evernote.edam.error.EDAMUserException;
 import com.evernote.thrift.TException;
-import com.rasalhague.eremenice.Utils;
+import com.rasalhague.ereminisce.Utils;
 import org.apache.log4j.Logger;
 
 public class EvernoteSession

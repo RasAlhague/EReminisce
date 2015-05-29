@@ -1,4 +1,4 @@
-import com.rasalhague.eremenice.connection.EvernoteSession;
+import com.rasalhague.ereminisce.connection.EvernoteSession;
 import org.apache.log4j.Logger;
 import org.junit.Test;
 

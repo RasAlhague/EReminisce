@@ -1,4 +1,4 @@
-package com.rasalhague.eremenice.processor;
+package com.rasalhague.ereminisce.processor;
 
 public class TagInfo
 {

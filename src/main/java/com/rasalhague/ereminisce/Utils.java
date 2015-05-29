@@ -1,4 +1,4 @@
-package com.rasalhague.eremenice;
+package com.rasalhague.ereminisce;
 
 import org.apache.log4j.Logger;
 

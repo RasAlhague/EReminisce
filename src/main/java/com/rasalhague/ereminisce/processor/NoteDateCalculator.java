@@ -1,4 +1,4 @@
-package com.rasalhague.eremenice.processor;
+package com.rasalhague.ereminisce.processor;
 
 import com.evernote.edam.notestore.NoteMetadata;
 import com.evernote.edam.type.Tag;
