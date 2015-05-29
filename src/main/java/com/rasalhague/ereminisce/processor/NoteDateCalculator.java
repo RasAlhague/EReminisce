@@ -96,8 +96,10 @@ public class NoteDateCalculator
             }
 
             int daysBetweenNowAndUpd = Days.daysBetween(updDateTime, now).getDays();
+            boolean outOfRipeDaysArray = (daysBetweenNowAndUpd > ripeDaysFromUpd.get(ripeDaysFromUpd.size() - 1));
+
             boolean containsInRipeDays = ripeDaysFromUpd.contains(daysBetweenNowAndUpd);
-            boolean maxRipeDay = (daysBetweenNowAndUpd > ripeDaysFromUpd.get(ripeDaysFromUpd.size() - 1)) &&
+            boolean maxRipeDay = outOfRipeDaysArray &&
                     ((daysBetweenNowAndUpd - daysShiftFromUpd) % (maxDaysGap + 1) == 0);
 
             /**
@@ -124,8 +126,8 @@ public class NoteDateCalculator
                     break;
                 }
             }
-            boolean missedLastRipeAndNeedToMarkAfterArray = noteLasRipeMs <
-                    updDateTime.plusDays(nearestLowRipeDayAfterArray).getMillis();
+            boolean missedLastRipeAndNeedToMarkAfterArray = (noteLasRipeMs <
+                    updDateTime.plusDays(nearestLowRipeDayAfterArray).getMillis()) && outOfRipeDaysArray;
 
             return containsInRipeDays ||
                     maxRipeDay ||
