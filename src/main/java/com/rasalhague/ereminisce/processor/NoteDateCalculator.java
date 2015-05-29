@@ -72,8 +72,8 @@ public class NoteDateCalculator
 
     private boolean checkForRipe(TagInfo tagInfo, Long updTime, Long noteLasRipeMs)
     {
-        //        DateTime now = new DateTime();
-        DateTime now = new DateTime().plusDays(700);
+        DateTime now = new DateTime();
+        //        DateTime now = new DateTime().plusDays(700);
         //        DateTime now = new DateTime(2015, 5, 29, 22, 0);
 
         DateTime updDateTime = new DateTime(updTime);

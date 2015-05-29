@@ -44,7 +44,10 @@ public class NoteProcessor
         HashMap<String, Long> notesRipeDays = serviceDataManager.getServiceData().getNotesRipeDays();
         ripeNoteMetadatas.forEach((ripeNoteMetadata) -> {
 
-            notesRipeDays.put(ripeNoteMetadata.getGuid(), new DateTime().plusDays(700).getMillis());
+            //for debug
+            //            notesRipeDays.put(ripeNoteMetadata.getGuid(), new DateTime().plusDays(700).getMillis());
+
+            notesRipeDays.put(ripeNoteMetadata.getGuid(), new DateTime().getMillis());
         });
 
         serviceDataManager.updateServiceData();

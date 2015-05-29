@@ -1,5 +1,6 @@
 package com.rasalhague.ereminisce;
 
+import com.evernote.auth.EvernoteService;
 import com.evernote.clients.NoteStoreClient;
 import com.rasalhague.ereminisce.connection.EvernoteSession;
 import com.rasalhague.ereminisce.processor.NoteProcessor;
@@ -23,9 +24,9 @@ public class Main
 
         Properties properties = new Properties(args);
 
-        EvernoteSession evernoteSession = new EvernoteSession();
-        //        EvernoteSession evernoteSession = new EvernoteSession(EvernoteService.PRODUCTION,
-        //                                                              "S=s419:U=4427db1:E=154f3a821e5:C=14d9bf6f290:P=1cd:A=en-devtoken:V=2:H=df154c27ae2beb7a994627690f11160a");
+        //        EvernoteSession evernoteSession = new EvernoteSession();
+        EvernoteSession evernoteSession = new EvernoteSession(EvernoteService.PRODUCTION,
+                                                              "S=s419:U=4427db1:E=154f3a821e5:C=14d9bf6f290:P=1cd:A=en-devtoken:V=2:H=df154c27ae2beb7a994627690f11160a");
         NoteStoreClient noteStoreClient = evernoteSession.open();
 
         Scanner scanner = new Scanner(noteStoreClient, properties);
