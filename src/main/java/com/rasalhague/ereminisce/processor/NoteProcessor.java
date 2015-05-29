@@ -28,9 +28,26 @@ public class NoteProcessor
         addNewNotesToServiceData(noteMetadatas);
         List<NoteMetadata> ripeNoteMetadatas = noteDateCalculator.extractRipeNotesMetadata(serviceDataManager.getServiceData()
                                                                                                              .getNotesUpdateTime(),
+                                                                                           serviceDataManager.getServiceData()
+                                                                                                             .getNotesRipeDays(),
                                                                                            noteMetadatas,
                                                                                            filteredTags);
-        markRipeNotes(ripeNoteMetadatas);
+        boolean markResult = noteMarker.mark(ripeNoteMetadatas);
+        if (markResult)
+        {
+            addRipeDaysToServiceData(ripeNoteMetadatas);
+        }
+    }
+
+    private void addRipeDaysToServiceData(List<NoteMetadata> ripeNoteMetadatas)
+    {
+        HashMap<String, Long> notesRipeDays = serviceDataManager.getServiceData().getNotesRipeDays();
+        ripeNoteMetadatas.forEach((ripeNoteMetadata) -> {
+
+            notesRipeDays.put(ripeNoteMetadata.getGuid(), new DateTime().plusDays(700).getMillis());
+        });
+
+        serviceDataManager.updateServiceData();
     }
 
     private void addNewNotesToServiceData(List<NoteMetadata> noteMetadatas)
@@ -47,10 +64,5 @@ public class NoteProcessor
         });
 
         serviceDataManager.updateServiceData();
-    }
-
-    private void markRipeNotes(List<NoteMetadata> noteMetadatas)
-    {
-        noteMarker.mark(noteMetadatas);
     }
 }

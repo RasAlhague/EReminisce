@@ -19,6 +19,7 @@ public class NoteMarker
     private final static Logger logger = Logger.getLogger(NoteMarker.class);
     private final NoteStoreClient noteStoreClient;
     private final String MARK_TAG_NAME = "EReminisce";
+    private long retryDelay = 300000; // 5min
     private String markTagGUID;
 
     public NoteMarker(NoteStoreClient noteStoreClient)
@@ -48,7 +49,9 @@ public class NoteMarker
         {
             logger.warn("Note have not marked");
             logger.warn(Utils.getStackTraceString(e));
-            logger.warn("Trying to remark");
+            logger.warn("Waiting " + retryDelay + " ms for retry");
+
+            Utils.sleep(retryDelay);
 
             return mark(noteMetadatas);
         }
@@ -60,6 +63,16 @@ public class NoteMarker
         {
             Tag tag = new Tag();
             tag.setName(MARK_TAG_NAME);
+
+            List<Tag> tagList = noteStoreClient.listTags();
+            for (Tag tag1 : tagList)
+            {
+                if (tag1.getName().equals(MARK_TAG_NAME))
+                {
+                    markTagGUID = tag1.getGuid();
+                    return markTagGUID;
+                }
+            }
 
             markTagGUID = noteStoreClient.createTag(tag).getGuid();
         }

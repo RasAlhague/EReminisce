@@ -23,6 +23,7 @@ public class NoteDateCalculator
     }
 
     public List<NoteMetadata> extractRipeNotesMetadata(HashMap<String, Long> notesUpdateTime,
+                                                       HashMap<String, Long> notesLastRipe,
                                                        List<NoteMetadata> noteMetadatas,
                                                        List<Tag> tags)
     {
@@ -37,8 +38,11 @@ public class NoteDateCalculator
                     if (tagGUID.equals(tag.getGuid()))
                     {
                         TagInfo tagInfo = parseTagName(tag);
+                        String noteGUID = noteMetadata.getGuid();
+                        Long noteUpdTimeMs = notesUpdateTime.get(noteGUID);
+                        Long noteLasRipeMs = notesLastRipe.containsKey(noteGUID) ? notesLastRipe.get(noteGUID) : noteUpdTimeMs;
 
-                        if (checkForRipe(tagInfo, notesUpdateTime.get(noteMetadata.getGuid())))
+                        if (checkForRipe(tagInfo, noteUpdTimeMs, noteLasRipeMs))
                         {
                             ripeNotesMetadata.add(noteMetadata);
                         }
@@ -66,12 +70,13 @@ public class NoteDateCalculator
         return tagsInfo.get(tag.getGuid());
     }
 
-    private boolean checkForRipe(TagInfo tagInfo, Long updTime)
+    private boolean checkForRipe(TagInfo tagInfo, Long updTime, Long noteLasRipeMs)
     {
-        DateTime updDateTime = new DateTime(updTime);
-        DateTime now = new DateTime();
-        //        DateTime now = new DateTime().plusDays(526);
+        //        DateTime now = new DateTime();
+        DateTime now = new DateTime().plusDays(700);
         //        DateTime now = new DateTime(2015, 5, 29, 22, 0);
+
+        DateTime updDateTime = new DateTime(updTime);
         ArrayList<Integer> ripeDaysFromUpd = new ArrayList<>();
         float delayK = tagInfo.getDelayK();
         int daysGap = 0;
@@ -95,7 +100,37 @@ public class NoteDateCalculator
             boolean maxRipeDay = (daysBetweenNowAndUpd > ripeDaysFromUpd.get(ripeDaysFromUpd.size() - 1)) &&
                     ((daysBetweenNowAndUpd - daysShiftFromUpd) % (maxDaysGap + 1) == 0);
 
-            return containsInRipeDays || maxRipeDay;
+            /**
+             * when activates between ripe days and have passed last ripe day
+             */
+            int nearestLowRipeDay = 0;
+            for (int ripeDay : ripeDaysFromUpd)
+            {
+                if (daysBetweenNowAndUpd < ripeDay) break;
+
+                nearestLowRipeDay = ripeDay;
+            }
+            boolean missedLastRipeAndNeedToMark = noteLasRipeMs < updDateTime.plusDays(nearestLowRipeDay).getMillis();
+
+            /**
+             * when activates after ripe days array and have passed last ripe day
+             */
+            int nearestLowRipeDayAfterArray = daysShiftFromUpd;
+            for (int i = daysBetweenNowAndUpd; i != 0; i--)
+            {
+                if ((i) % (maxDaysGap + 1) == 0)
+                {
+                    nearestLowRipeDayAfterArray = i;
+                    break;
+                }
+            }
+            boolean missedLastRipeAndNeedToMarkAfterArray = noteLasRipeMs <
+                    updDateTime.plusDays(nearestLowRipeDayAfterArray).getMillis();
+
+            return containsInRipeDays ||
+                    maxRipeDay ||
+                    missedLastRipeAndNeedToMark ||
+                    missedLastRipeAndNeedToMarkAfterArray;
         }
 
         return false;
