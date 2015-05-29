@@ -13,20 +13,21 @@ import org.apache.log4j.Logger;
 public class EvernoteSession
 {
     private final static Logger          logger          = Logger.getLogger(EvernoteSession.class);
-    private final        String          DEV_TOKEN       = "S=s1:U=90da5:E=154bd566f51:C=14d65a54318:P=1cd:A=en-devtoken:V=2:H=6255af9a78934f41a9274f698651f05e";
     private final        long            RETRY_DELAY     = 5000;
+    private              String          devToken        = "S=s1:U=90da5:E=154bd566f51:C=14d65a54318:P=1cd:A=en-devtoken:V=2:H=6255af9a78934f41a9274f698651f05e";
     private              EvernoteService evernoteService = EvernoteService.SANDBOX;
     private EvernoteAuth evernoteAuth;
 
     public EvernoteSession()
     {
-        evernoteAuth = new EvernoteAuth(evernoteService, DEV_TOKEN);
+        evernoteAuth = new EvernoteAuth(evernoteService, devToken);
     }
 
-    public EvernoteSession(EvernoteService evernoteService)
+    public EvernoteSession(EvernoteService evernoteService, String devToken)
     {
         this.evernoteService = evernoteService;
-        evernoteAuth = new EvernoteAuth(evernoteService, DEV_TOKEN);
+        this.evernoteAuth = new EvernoteAuth(evernoteService, devToken);
+        this.devToken = devToken;
     }
 
     public NoteStoreClient open()
