@@ -4,6 +4,7 @@ import com.evernote.clients.NoteStoreClient;
 import com.evernote.edam.notestore.NoteMetadata;
 import com.evernote.edam.type.Tag;
 import com.rasalhague.eremenice.scanner.service.ServiceDataManager;
+import org.joda.time.DateTime;
 
 import java.util.HashMap;
 import java.util.List;
@@ -36,9 +37,12 @@ public class NoteProcessor
     {
         HashMap<String, Long> notesUpdateTime = serviceDataManager.getServiceData().getNotesUpdateTime();
         noteMetadatas.forEach((noteMetadata) -> {
+
+            //if it just added note, put it to service note storage
+            //adding with NOW time coz upd date did not update after tag creation (in win version)
             if (!notesUpdateTime.containsKey(noteMetadata.getGuid()))
             {
-                notesUpdateTime.put(noteMetadata.getGuid(), noteMetadata.getUpdated());
+                notesUpdateTime.put(noteMetadata.getGuid(), new DateTime().getMillis());
             }
         });
 
