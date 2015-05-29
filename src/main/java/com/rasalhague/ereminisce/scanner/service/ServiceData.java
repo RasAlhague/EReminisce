@@ -22,6 +22,7 @@ public class ServiceData
     {
         return "ServiceData{" +
                 "notesUpdateTime=" + notesUpdateTime +
+                ", notesRipeDays=" + notesRipeDays +
                 '}';
     }
 }
