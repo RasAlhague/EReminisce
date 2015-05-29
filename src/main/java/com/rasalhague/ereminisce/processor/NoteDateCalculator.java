@@ -2,6 +2,7 @@ package com.rasalhague.ereminisce.processor;
 
 import com.evernote.edam.notestore.NoteMetadata;
 import com.evernote.edam.type.Tag;
+import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 
@@ -13,9 +14,10 @@ import java.util.regex.Pattern;
 
 public class NoteDateCalculator
 {
-    private final String                   TAG_PARSE_REGEX = "(?<ER>ER) (?<DelayK>\\d+)";
-    private       HashMap<String, TagInfo> tagsInfo        = new HashMap<>();
-    private       int                      maxDaysGap      = 30;
+    private final static Logger                   logger          = Logger.getLogger(NoteDateCalculator.class);
+    private final        String                   TAG_PARSE_REGEX = "(?<ER>ER) (?<DelayK>\\d+)";
+    private              HashMap<String, TagInfo> tagsInfo        = new HashMap<>();
+    private              int                      maxDaysGap      = 30;
 
     public void setMaxDaysGap(int maxDaysGap)
     {
@@ -44,6 +46,7 @@ public class NoteDateCalculator
 
                         if (checkForRipe(tagInfo, noteUpdTimeMs, noteLasRipeMs))
                         {
+                            logger.info("Check ripe for " + noteMetadata);
                             ripeNotesMetadata.add(noteMetadata);
                         }
                     }
@@ -99,7 +102,7 @@ public class NoteDateCalculator
             boolean outOfRipeDaysArray = (daysBetweenNowAndUpd > ripeDaysFromUpd.get(ripeDaysFromUpd.size() - 1));
 
             boolean containsInRipeDays = ripeDaysFromUpd.contains(daysBetweenNowAndUpd);
-            boolean maxRipeDay = outOfRipeDaysArray &&
+            boolean ripeDayOutOfRipeDaysArray = outOfRipeDaysArray &&
                     ((daysBetweenNowAndUpd - daysShiftFromUpd) % (maxDaysGap + 1) == 0);
 
             /**
@@ -115,7 +118,7 @@ public class NoteDateCalculator
             boolean missedLastRipeAndNeedToMark = noteLasRipeMs < updDateTime.plusDays(nearestLowRipeDay).getMillis();
 
             /**
-             * when activates after ripe days array and have passed last ripe day
+             * when activates between ripe days and have passed last ripe day AND out of ripe array
              */
             int nearestLowRipeDayAfterArray = daysShiftFromUpd;
             for (int i = daysBetweenNowAndUpd; i != 0; i--)
@@ -129,8 +132,13 @@ public class NoteDateCalculator
             boolean missedLastRipeAndNeedToMarkAfterArray = (noteLasRipeMs <
                     updDateTime.plusDays(nearestLowRipeDayAfterArray).getMillis()) && outOfRipeDaysArray;
 
+            logger.info("containsInRipeDays: " + containsInRipeDays);
+            logger.info("ripeDayOutOfRipeDaysArray: " + ripeDayOutOfRipeDaysArray);
+            logger.info("missedLastRipeAndNeedToMark: " + missedLastRipeAndNeedToMark);
+            logger.info("missedLastRipeAndNeedToMarkAfterArray: " + missedLastRipeAndNeedToMarkAfterArray);
+
             return containsInRipeDays ||
-                    maxRipeDay ||
+                    ripeDayOutOfRipeDaysArray ||
                     missedLastRipeAndNeedToMark ||
                     missedLastRipeAndNeedToMarkAfterArray;
         }
