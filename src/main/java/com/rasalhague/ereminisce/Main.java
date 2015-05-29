@@ -1,8 +1,12 @@
 package com.rasalhague.ereminisce;
 
+import com.evernote.clients.NoteStoreClient;
+import com.rasalhague.ereminisce.connection.EvernoteSession;
+import com.rasalhague.ereminisce.processor.NoteProcessor;
+import com.rasalhague.ereminisce.properties.Properties;
+import com.rasalhague.ereminisce.scanner.Scanner;
+import com.rasalhague.ereminisce.scanner.service.ServiceDataManager;
 import org.apache.log4j.Logger;
-
-import javax.swing.*;
 
 public class Main
 {
@@ -10,36 +14,25 @@ public class Main
 
     public static void main(String[] args)
     {
-        new Main().start();
+        new Main().start(args);
     }
 
-    private void start()
+    private void start(String[] args)
     {
         logger.info("Program started");
-        try
-        {
-            logger.info(ClassLoader.getSystemClassLoader().getResource(".").getPath());
-            logger.info(Main.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
 
-            JOptionPane.showMessageDialog(null, "infoMessage", "InfoBox: " + "titleBar", JOptionPane.INFORMATION_MESSAGE);
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
+        Properties properties = new Properties(args);
 
-//        EvernoteSession evernoteSession = new EvernoteSession();
-////        EvernoteSession evernoteSession = new EvernoteSession(EvernoteService.PRODUCTION,
-////                                                              "S=s419:U=4427db1:E=154f3a821e5:C=14d9bf6f290:P=1cd:A=en-devtoken:V=2:H=df154c27ae2beb7a994627690f11160a");
-//        NoteStoreClient noteStoreClient = evernoteSession.open();
-//
-//        Scanner scanner = new Scanner(noteStoreClient);
-//        ServiceDataManager serviceDataManager = new ServiceDataManager(noteStoreClient);
-//        NoteProcessor noteProcessor = new NoteProcessor(noteStoreClient, serviceDataManager);
-//
-//        scanner.setScannerPeriod(5000);
-//
-//        Mediator mediator = new Mediator(scanner, noteProcessor);
-//        mediator.startScan();
+        EvernoteSession evernoteSession = new EvernoteSession();
+        //        EvernoteSession evernoteSession = new EvernoteSession(EvernoteService.PRODUCTION,
+        //                                                              "S=s419:U=4427db1:E=154f3a821e5:C=14d9bf6f290:P=1cd:A=en-devtoken:V=2:H=df154c27ae2beb7a994627690f11160a");
+        NoteStoreClient noteStoreClient = evernoteSession.open();
+
+        Scanner scanner = new Scanner(noteStoreClient, properties);
+        ServiceDataManager serviceDataManager = new ServiceDataManager(noteStoreClient);
+        NoteProcessor noteProcessor = new NoteProcessor(noteStoreClient, serviceDataManager);
+
+        Mediator mediator = new Mediator(scanner, noteProcessor);
+        mediator.startScan();
     }
 }

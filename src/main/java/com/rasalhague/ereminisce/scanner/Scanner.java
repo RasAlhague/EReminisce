@@ -11,9 +11,12 @@ import com.evernote.edam.notestore.NotesMetadataResultSpec;
 import com.evernote.edam.type.Tag;
 import com.evernote.thrift.TException;
 import com.rasalhague.ereminisce.Utils;
+import com.rasalhague.ereminisce.properties.Properties;
+import com.rasalhague.ereminisce.properties.PropertiesNames;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,16 +24,19 @@ public class Scanner implements ScannerTimer.TimerTick
 {
     private final static Logger            logger                   = Logger.getLogger(Scanner.class);
     private final        String            TAG_IDENTIFICATION_REGEX = "(?<ER>ER) (?<FirstReminisce>\\d+)";
-    private final        long              RETRY_DELAY              = 5000;
+    private final String PROPERTIES_SELECT_REGEX = "(?<ER>ER) (?<FirstReminisce>\\d+)";
+    private       long   retryDelay              = 300000; // 5min
     private              ScannerObservable scannerObservable        = new ScannerObservable();
     private NoteStoreClient noteStoreClient;
     private List<Tag>       filteredTags;
     private ScannerTimer    scannerTimer;
 
-    public Scanner(NoteStoreClient noteStoreClient)
+    public Scanner(NoteStoreClient noteStoreClient, Properties properties)
     {
         this.noteStoreClient = noteStoreClient;
         this.scannerTimer = new ScannerTimer(this);
+
+        setUpFieldsFromProperties(properties);
     }
 
     public ScannerObservable getScannerObservable()
@@ -66,6 +72,31 @@ public class Scanner implements ScannerTimer.TimerTick
     {
         List<NoteMetadata> noteMetadatas = loadTaggedNotes();
         scannerObservable.notifyTaggedNotesLoadedListeners(noteMetadatas, filteredTags);
+    }
+
+    private void setUpFieldsFromProperties(Properties properties)
+    {
+        try
+        {
+            HashMap<String, String> propertiesMap = properties.getPropertiesMap();
+
+            if (propertiesMap.containsKey(PropertiesNames.ON_EXCEPTION_RETRY_DELAY))
+            {
+                long parseLong = Long.parseLong(propertiesMap.get(PropertiesNames.ON_EXCEPTION_RETRY_DELAY));
+                retryDelay = parseLong;
+                logger.info(PropertiesNames.ON_EXCEPTION_RETRY_DELAY + " set up to " + parseLong);
+            }
+            if (propertiesMap.containsKey(PropertiesNames.SCAN_PERIOD))
+            {
+                long parseLong = Long.parseLong(propertiesMap.get(PropertiesNames.SCAN_PERIOD));
+                setScannerPeriod(parseLong);
+                logger.info(PropertiesNames.SCAN_PERIOD + " set up to " + parseLong);
+            }
+        }
+        catch (Exception e)
+        {
+            logger.info(Utils.getStackTraceString(e));
+        }
     }
 
     private List<Tag> loadTagList()
@@ -128,8 +159,8 @@ public class Scanner implements ScannerTimer.TimerTick
 
             try
             {
-                Thread.sleep(RETRY_DELAY);
-                loadNotesByTags(tags);
+                Thread.sleep(retryDelay);
+                notes = loadNotesByTags(tags);
             }
             catch (InterruptedException e1)
             {

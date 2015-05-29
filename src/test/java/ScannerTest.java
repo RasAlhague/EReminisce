@@ -1,6 +1,7 @@
 import com.evernote.edam.notestore.NoteMetadata;
 import com.evernote.edam.type.Tag;
 import com.rasalhague.ereminisce.connection.EvernoteSession;
+import com.rasalhague.ereminisce.properties.Properties;
 import com.rasalhague.ereminisce.scanner.Scanner;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,7 +19,7 @@ public class ScannerTest
     public void before() throws Exception
     {
         EvernoteSession evernoteSession = new EvernoteSession();
-        scanner = new Scanner(evernoteSession.open());
+        scanner = new Scanner(evernoteSession.open(), new Properties(new String[]{}));
     }
 
     @Test(timeout = 3000)

@@ -5,7 +5,7 @@ import java.util.TimerTask;
 public class ScannerTimer
 {
     private long            scannerStartDelay = 0;
-    private long            scannerPeriod     = 5000;
+    private long scannerPeriod = 3600000; // 1h
     private java.util.Timer timer             = new java.util.Timer("Scanner timer");
     private TimerSchedule   timerSchedule     = new TimerSchedule();
     private TimerTick timerTickListener;
