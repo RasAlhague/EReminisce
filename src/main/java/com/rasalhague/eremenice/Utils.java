@@ -1,10 +1,14 @@
 package com.rasalhague.eremenice;
 
+import org.apache.log4j.Logger;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
 public class Utils
 {
+    private final static Logger logger = Logger.getLogger(Utils.class);
+
     public static String getStackTraceString(Exception e)
     {
         StringWriter sw = new StringWriter();
@@ -21,7 +25,7 @@ public class Utils
         }
         catch (InterruptedException e)
         {
-            e.printStackTrace();
+            logger.info(Utils.getStackTraceString(e));
         }
     }
 }
