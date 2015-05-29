@@ -24,8 +24,7 @@ public class Scanner implements ScannerTimer.TimerTick
 {
     private final static Logger            logger                   = Logger.getLogger(Scanner.class);
     private final        String            TAG_IDENTIFICATION_REGEX = "(?<ER>ER) (?<FirstReminisce>\\d+)";
-    private final String PROPERTIES_SELECT_REGEX = "(?<ER>ER) (?<FirstReminisce>\\d+)";
-    private       long   retryDelay              = 300000; // 5min
+    private long retryDelay = 300000; // 5min
     private              ScannerObservable scannerObservable        = new ScannerObservable();
     private NoteStoreClient noteStoreClient;
     private List<Tag>       filteredTags;
