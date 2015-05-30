@@ -60,10 +60,22 @@ public class Scanner implements ScannerTimer.TimerTick
 
     public List<NoteMetadata> loadTaggedNotes()
     {
-        List<Tag> tagList = loadTagList();
-        filteredTags = filterTags(tagList);
+        List<NoteMetadata> taggedNotes;
+        try
+        {
+            List<Tag> tagList = loadTagList();
+            filteredTags = filterTags(tagList);
+            taggedNotes = loadNotesByTags(filteredTags);
+        }
+        catch (EDAMUserException | EDAMSystemException | TException | EDAMNotFoundException e)
+        {
+            logger.info(Utils.getStackTraceString(e));
+            logger.info("Retry after " + retryDelay);
+            Utils.sleep(retryDelay);
+            taggedNotes = loadTaggedNotes();
+        }
 
-        return loadNotesByTags(filteredTags);
+        return taggedNotes;
     }
 
     @Override
@@ -98,18 +110,11 @@ public class Scanner implements ScannerTimer.TimerTick
         }
     }
 
-    private List<Tag> loadTagList()
+    private List<Tag> loadTagList() throws EDAMUserException, EDAMSystemException, TException
     {
-        List<Tag> tagList = new ArrayList<>();
+        List<Tag> tagList;
 
-        try
-        {
-            tagList = noteStoreClient.listTags();
-        }
-        catch (EDAMUserException | EDAMSystemException | TException e)
-        {
-            logger.info(Utils.getStackTraceString(e));
-        }
+        tagList = noteStoreClient.listTags();
 
         return tagList;
     }
@@ -126,7 +131,11 @@ public class Scanner implements ScannerTimer.TimerTick
         return tagList.stream().map(Tag::getGuid).collect(Collectors.toList());
     }
 
-    private List<NoteMetadata> loadNotesByTags(List<Tag> tags)
+    private List<NoteMetadata> loadNotesByTags(List<Tag> tags) throws
+                                                               EDAMUserException,
+                                                               EDAMSystemException,
+                                                               TException,
+                                                               EDAMNotFoundException
     {
         NoteFilter noteFilter = new NoteFilter();
 
@@ -139,32 +148,12 @@ public class Scanner implements ScannerTimer.TimerTick
 
         NotesMetadataList notesMetadata;
         List<NoteMetadata> notes = new ArrayList<>();
-        try
+        List<String> tagsGUID = extractTagsGUID(tags);
+        for (int i = 0; i < tagsGUID.size(); i++)
         {
-            List<String> tagsGUID = extractTagsGUID(tags);
-            for (int i = 0; i < tagsGUID.size(); i++)
-            {
-                noteFilter.setTagGuids(tagsGUID.subList(i, i + 1));
-                notesMetadata = noteStoreClient.findNotesMetadata(noteFilter,
-                                                                  0,
-                                                                  Short.MAX_VALUE,
-                                                                  notesMetadataResultSpec);
-                notes.addAll(notesMetadata.getNotes());
-            }
-        }
-        catch (EDAMUserException | EDAMSystemException | TException | EDAMNotFoundException e)
-        {
-            logger.info(Utils.getStackTraceString(e));
-
-            try
-            {
-                Thread.sleep(retryDelay);
-                notes = loadNotesByTags(tags);
-            }
-            catch (InterruptedException e1)
-            {
-                logger.info(Utils.getStackTraceString(e1));
-            }
+            noteFilter.setTagGuids(tagsGUID.subList(i, i + 1));
+            notesMetadata = noteStoreClient.findNotesMetadata(noteFilter, 0, Short.MAX_VALUE, notesMetadataResultSpec);
+            notes.addAll(notesMetadata.getNotes());
         }
 
         return notes;
