@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class NoteDateCalculator
 {
@@ -53,6 +54,9 @@ public class NoteDateCalculator
                 }
             }
         }
+
+        logger.info("So, ripe notes are: " +
+                            ripeNotesMetadata.stream().map(NoteMetadata::getTitle).collect(Collectors.toList()) + "\n");
 
         return ripeNotesMetadata;
     }
