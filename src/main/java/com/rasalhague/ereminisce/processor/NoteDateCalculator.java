@@ -73,18 +73,21 @@ public class NoteDateCalculator
         return tagsInfo.get(tag.getGuid());
     }
 
+    /**
+     * main fucking logic
+     */
     private boolean checkForRipe(TagInfo tagInfo, Long updTime, Long noteLasRipeMs)
     {
         DateTime now = new DateTime();
         //        DateTime now = new DateTime().plusDays(700);
         //        DateTime now = new DateTime(2015, 5, 29, 22, 0);
 
-        DateTime updDateTime = new DateTime(updTime);
-        ArrayList<Integer> ripeDaysFromUpd = new ArrayList<>();
-        float delayK = tagInfo.getDelayK();
-        int daysGap = 0;
-        int daysShiftFromUpd = 0;
-        int iterator = 0;
+        DateTime           updDateTime      = new DateTime(updTime);
+        ArrayList<Integer> ripeDaysFromUpd  = new ArrayList<>();
+        float              delayK           = tagInfo.getDelayK();
+        int                daysGap          = 0;
+        int                daysShiftFromUpd = 0;
+        int                iterator         = 0;
 
         if (delayK > 0)
         {
@@ -100,8 +103,9 @@ public class NoteDateCalculator
 
             int daysBetweenNowAndUpd = Days.daysBetween(updDateTime, now).getDays();
             boolean outOfRipeDaysArray = (daysBetweenNowAndUpd > ripeDaysFromUpd.get(ripeDaysFromUpd.size() - 1));
+            boolean hasBeenRipedToday = Days.daysBetween(new DateTime(noteLasRipeMs), now).getDays() == 0;
 
-            boolean containsInRipeDays = ripeDaysFromUpd.contains(daysBetweenNowAndUpd);
+            boolean containsInRipeDays = ripeDaysFromUpd.contains(daysBetweenNowAndUpd) && !hasBeenRipedToday;
             boolean ripeDayOutOfRipeDaysArray = outOfRipeDaysArray &&
                     ((daysBetweenNowAndUpd - daysShiftFromUpd) % (maxDaysGap + 1) == 0);
 

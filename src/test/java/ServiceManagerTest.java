@@ -1,4 +1,5 @@
 import com.rasalhague.ereminisce.connection.EvernoteSession;
+import com.rasalhague.ereminisce.properties.Properties;
 import com.rasalhague.ereminisce.scanner.service.ServiceData;
 import com.rasalhague.ereminisce.scanner.service.ServiceDataManager;
 import org.junit.Before;
@@ -13,7 +14,7 @@ public class ServiceManagerTest
     @Before
     public void setUp()
     {
-        EvernoteSession evernoteSession = new EvernoteSession();
+        EvernoteSession evernoteSession = new EvernoteSession(new Properties(new String[]{}));
         serviceDataManager = new ServiceDataManager(evernoteSession.open());
     }
 

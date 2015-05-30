@@ -41,13 +41,15 @@ public class NoteProcessor
 
     private void addRipeDaysToServiceData(List<NoteMetadata> ripeNoteMetadatas)
     {
+        DateTime now            = new DateTime();
+        DateTime beginningOfDay = new DateTime(now.getYear(), now.getMonthOfYear(), now.getDayOfMonth(), 0, 0, 0, 0);
         HashMap<String, Long> notesRipeDays = serviceDataManager.getServiceData().getNotesRipeDays();
         ripeNoteMetadatas.forEach((ripeNoteMetadata) -> {
 
             //for debug
             //            notesRipeDays.put(ripeNoteMetadata.getGuid(), new DateTime().plusDays(700).getMillis());
 
-            notesRipeDays.put(ripeNoteMetadata.getGuid(), new DateTime().getMillis());
+            notesRipeDays.put(ripeNoteMetadata.getGuid(), beginningOfDay.getMillis());
         });
 
         serviceDataManager.updateServiceData();
@@ -55,6 +57,8 @@ public class NoteProcessor
 
     private void addNewNotesToServiceData(List<NoteMetadata> noteMetadatas)
     {
+        DateTime now            = new DateTime();
+        DateTime beginningOfDay = new DateTime(now.getYear(), now.getMonthOfYear(), now.getDayOfMonth(), 0, 0, 0, 0);
         HashMap<String, Long> notesUpdateTime = serviceDataManager.getServiceData().getNotesUpdateTime();
         noteMetadatas.forEach((noteMetadata) -> {
 
@@ -62,7 +66,7 @@ public class NoteProcessor
             //adding with NOW time coz upd date did not update after tag creation (in win version)
             if (!notesUpdateTime.containsKey(noteMetadata.getGuid()))
             {
-                notesUpdateTime.put(noteMetadata.getGuid(), new DateTime().getMillis());
+                notesUpdateTime.put(noteMetadata.getGuid(), beginningOfDay.getMillis());
             }
         });
 

@@ -18,7 +18,7 @@ public class ScannerTest
     @Before
     public void before() throws Exception
     {
-        EvernoteSession evernoteSession = new EvernoteSession();
+        EvernoteSession evernoteSession = new EvernoteSession(new Properties(new String[]{}));
         scanner = new Scanner(evernoteSession.open(), new Properties(new String[]{}));
     }
 

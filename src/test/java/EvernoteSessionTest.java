@@ -1,10 +1,11 @@
 import com.evernote.clients.NoteStoreClient;
 import com.rasalhague.ereminisce.connection.EvernoteSession;
+import com.rasalhague.ereminisce.properties.Properties;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * EvernoteSession Tester.
@@ -20,7 +21,7 @@ public class EvernoteSessionTest
     @Before
     public void before() throws Exception
     {
-        evernoteSession = new EvernoteSession();
+        evernoteSession = new EvernoteSession(new Properties(new String[]{}));
     }
 
     @After

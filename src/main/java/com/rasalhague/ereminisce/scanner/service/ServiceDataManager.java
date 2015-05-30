@@ -26,7 +26,8 @@ public class ServiceDataManager
     private final static Logger logger             = Logger.getLogger(ServiceDataManager.class);
     private final        String SERVICE_NOTE_TITLE = "ERemenice Service Note";
     private final        String SERVICE_TAG_NAME   = "ERemenice Service Note";
-    private final        String CONTENT_FILTER     = "(<en-note>)(.*?)(?<Content>\\{.*\\})?(.*)(<\\/en-note>)";
+    //    private final        String CONTENT_FILTER     = "(<en-note>)(.*?)(?<Content>\\{.*\\})?(.*)(<\\/en-note>)";
+    private final String CONTENT_FILTER = "(?<Content>\\{.*\\})";
     private final        Gson   gson               = new GsonBuilder().create();
     private final NoteStoreClient noteStoreClient;
     private long serviceDataLoadRetryDelay = 5000;
@@ -69,27 +70,27 @@ public class ServiceDataManager
 
     private ServiceData loadServiceData()
     {
-        Note note = loadServiceNote();
-
-        String content = note.getContent();
-        Matcher matcher = Pattern.compile(CONTENT_FILTER, Pattern.DOTALL).matcher(content);
-        String filteredContent = "";
-        if (matcher.find())
-        {
-            filteredContent = matcher.group("Content");
-        }
-
-        /**
-         * Must return felt and recognized ServiceData
-         * else data will override in NoteProcessor.addNewNotesToServiceData() with new DateTime()
-         * that causing time update for all ER notes
-         *
-         * So, do recursive call
-         * You Shell Not Pass
-         */
-        ServiceData serviceData;
+        Note   note            = loadServiceNote();
+        String content         = note.getContent();
+        String filteredContent = null;
+        String unescapedContent;
         try
         {
+            unescapedContent = unescapedXML(content);
+            Matcher matcher = Pattern.compile(CONTENT_FILTER, Pattern.DOTALL).matcher(unescapedContent);
+            if (matcher.find())
+            {
+                filteredContent = matcher.group("Content");
+            }
+
+            /**
+             * Must return felt and recognized ServiceData
+             * else data will override in NoteProcessor.addNewNotesToServiceData() with new DateTime()
+             * that causing time update for all ER notes
+             *
+             * So, do recursive call
+             * You Shell Not Pass
+             */
             serviceData = gson.fromJson(filteredContent, ServiceData.class);
 
             if (serviceData == null) throw new NullPointerException("serviceData == null");
@@ -107,6 +108,15 @@ public class ServiceDataManager
         }
 
         return serviceData;
+    }
+
+    private String unescapedXML(String XML)
+    {
+        return XML.replace("&quot;", "\"")
+                  .replace("&amp;", "&")
+                  .replace("&lt;", "<")
+                  .replace("&gt;", ">")
+                  .replace("&apos;", "'");
     }
 
     private Note loadServiceNote()
