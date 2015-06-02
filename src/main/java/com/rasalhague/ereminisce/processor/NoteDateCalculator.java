@@ -83,8 +83,15 @@ public class NoteDateCalculator
     private boolean checkForRipe(TagInfo tagInfo, Long updTime, Long noteLasRipeMs)
     {
         DateTime now = new DateTime();
+
+        /**
+         * For Debug
+         *
+         * IMPORTANT: if you wont to use this, you must change debug value in ServiceDataManager.updateWithLastRipes()
+         */
         //        DateTime now = new DateTime().plusDays(700);
         //        DateTime now = new DateTime(2015, 5, 29, 22, 0);
+        // ---
 
         DateTime           updDateTime      = new DateTime(updTime);
         ArrayList<Integer> ripeDaysFromUpd  = new ArrayList<>();
