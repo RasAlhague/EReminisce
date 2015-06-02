@@ -6,7 +6,6 @@ import com.evernote.edam.type.Tag;
 import com.rasalhague.ereminisce.scanner.service.ServiceDataManager;
 import org.joda.time.DateTime;
 
-import java.util.HashMap;
 import java.util.List;
 
 public class NoteProcessor
@@ -43,33 +42,22 @@ public class NoteProcessor
     {
         DateTime now            = new DateTime();
         DateTime beginningOfDay = new DateTime(now.getYear(), now.getMonthOfYear(), now.getDayOfMonth(), 0, 0, 0, 0);
-        HashMap<String, Long> notesRipeDays = serviceDataManager.getServiceData().getNotesRipeDays();
-        ripeNoteMetadatas.forEach((ripeNoteMetadata) -> {
 
-            //for debug
-            //            notesRipeDays.put(ripeNoteMetadata.getGuid(), new DateTime().plusDays(700).getMillis());
-
-            notesRipeDays.put(ripeNoteMetadata.getGuid(), beginningOfDay.getMillis());
-        });
-
-        serviceDataManager.updateServiceData();
+        serviceDataManager.updateWithLastRipes(ripeNoteMetadatas, beginningOfDay);
     }
 
     private void addNewNotesToServiceData(List<NoteMetadata> noteMetadatas)
     {
         DateTime now            = new DateTime();
         DateTime beginningOfDay = new DateTime(now.getYear(), now.getMonthOfYear(), now.getDayOfMonth(), 0, 0, 0, 0);
-        HashMap<String, Long> notesUpdateTime = serviceDataManager.getServiceData().getNotesUpdateTime();
-        noteMetadatas.forEach((noteMetadata) -> {
 
-            //if it just added note, put it to service note storage
-            //adding with NOW time coz upd date did not update after tag creation (in win version)
-            if (!notesUpdateTime.containsKey(noteMetadata.getGuid()))
-            {
-                notesUpdateTime.put(noteMetadata.getGuid(), beginningOfDay.getMillis());
-            }
-        });
-
-        serviceDataManager.updateServiceData();
+        /**
+         * if it just added note, put it to service note storage
+         *
+         * beginningOfDay has been chosen as date of note creation instead of NOW
+         * coz that is convenient when note updates at night (00 00) so, that I can read it (all of them) at morning
+         * if it ripe of course
+         */
+        serviceDataManager.updateWithNewNotes(noteMetadatas, beginningOfDay);
     }
 }

@@ -5,6 +5,7 @@ import com.evernote.edam.error.EDAMNotFoundException;
 import com.evernote.edam.error.EDAMSystemException;
 import com.evernote.edam.error.EDAMUserException;
 import com.evernote.edam.notestore.NoteFilter;
+import com.evernote.edam.notestore.NoteMetadata;
 import com.evernote.edam.notestore.NotesMetadataList;
 import com.evernote.edam.notestore.NotesMetadataResultSpec;
 import com.evernote.edam.type.Note;
@@ -17,6 +18,7 @@ import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -27,7 +29,7 @@ public class ServiceDataManager
     private final        String SERVICE_NOTE_TITLE = "ERemenice Service Note";
     private final        String SERVICE_TAG_NAME   = "ERemenice Service Note";
     //    private final        String CONTENT_FILTER     = "(<en-note>)(.*?)(?<Content>\\{.*\\})?(.*)(<\\/en-note>)";
-    private final String CONTENT_FILTER = "(?<Content>\\{.*\\})";
+    private final        String CONTENT_FILTER     = "(?<Content>\\{.*\\})";
     private final        Gson   gson               = new GsonBuilder().create();
     private final NoteStoreClient noteStoreClient;
     private long serviceDataLoadRetryDelay = 5000;
@@ -66,6 +68,34 @@ public class ServiceDataManager
         {
             logger.info(Utils.getStackTraceString(e));
         }
+    }
+
+    public void updateWithNewNotes(List<NoteMetadata> noteMetadatas, DateTime addedTime)
+    {
+        HashMap<String, Long> notesUpdateTime = getServiceData().getNotesUpdateTime();
+        noteMetadatas.forEach((noteMetadata) -> {
+
+            if (!notesUpdateTime.containsKey(noteMetadata.getGuid()))
+            {
+                notesUpdateTime.put(noteMetadata.getGuid(), addedTime.getMillis());
+            }
+        });
+
+        updateServiceData();
+    }
+
+    public void updateWithLastRipes(List<NoteMetadata> ripeNoteMetadatas, DateTime beginningOfDay)
+    {
+        HashMap<String, Long> notesRipeDays = getServiceData().getNotesRipeDays();
+        ripeNoteMetadatas.forEach((ripeNoteMetadata) -> {
+
+            //for debug
+            //            notesRipeDays.put(ripeNoteMetadata.getGuid(), new DateTime().plusDays(700).getMillis());
+
+            notesRipeDays.put(ripeNoteMetadata.getGuid(), beginningOfDay.getMillis());
+        });
+
+        updateServiceData();
     }
 
     private ServiceData loadServiceData()
